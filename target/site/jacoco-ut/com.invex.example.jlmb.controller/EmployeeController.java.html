@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmployeeController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">example-jlmb</a> &gt; <a href="index.source.html" class="el_package">com.invex.example.jlmb.controller</a> &gt; <span class="el_source">EmployeeController.java</span></div><h1>EmployeeController.java</h1><pre class="source lang-java linenums">package com.invex.example.jlmb.controller;
+
+import java.util.List;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.invex.example.jlmb.data.dto.WebResponseDTO;
+import com.invex.example.jlmb.data.entities.Employee;
+import com.invex.example.jlmb.service.IEmployeeService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+@Tag(name=&quot;Empleados&quot;, description = &quot;Operaciones sobre empleados&quot;)
+@ApiResponse(responseCode = &quot;500&quot;, description = &quot;Error interno del servidor&quot;)
+@Validated
+@RestController
+@RequestMapping(&quot;/empleado&quot;)
+@RequiredArgsConstructor
+public class EmployeeController {
+
+	private final IEmployeeService service;
+	
+	@GetMapping(&quot;all&quot;)
+	@Operation(summary = &quot;Obtener todos los empleados&quot;, description = &quot;Obtiene todos los empleados registrados&quot;)
+	@ApiResponse(responseCode = &quot;200&quot;, description = &quot;Ejecución correcta. Devuelve los registros disponibles&quot;)
+	public WebResponseDTO getAll( HttpServletResponse response ) {
+<span class="nc" id="L43">		return service.getAll(response);</span>
+	}
+	
+	@Operation(summary = &quot;Elimina un empleado&quot;, description = &quot;Obtiene todos los empleados registrados en la tabla empleado&quot;)
+	@ApiResponse(responseCode = &quot;200&quot;, description = &quot;Ejecución correcta. Devuelve los registros disponibles&quot;)
+	@ApiResponse(responseCode = &quot;400&quot;, description = &quot;Empleado inválido. El ID proporcionado no corresponde a un empleado registrado&quot;)
+	@DeleteMapping(&quot;/delete/{id}&quot;)
+	public WebResponseDTO delete(
+			@Parameter(description = &quot;ID del empleado&quot;, example = &quot;1&quot;)
+			@PathVariable int id, 
+			HttpServletResponse response) {
+<span class="nc" id="L54">		return service.delete(response, id);</span>
+	}
+	
+	@Operation(summary = &quot;Actualiza los datos de un empleado&quot;, description = &quot;Actualiza los registros de un empleado (excepto su ID)&quot;)
+	@ApiResponse(responseCode = &quot;200&quot;, description = &quot;Ejecución correcta. El empleado se actualizo.&quot;)
+	@ApiResponse(responseCode = &quot;400&quot;, description = &quot;Empleado inválido. El ID proporcionado no corresponde a un empleado registrado&quot;)
+	@ApiResponse(responseCode = &quot;400&quot;, description = &quot;Errores de validación. Uno o varios de los campos proporcionados no cumplen con las validaciones definidas&quot;)
+	@PutMapping(&quot;/update/{id}&quot;)
+	public WebResponseDTO put(
+			@Parameter(description = &quot;ID del empleado&quot;, example = &quot;1&quot;)
+			@PathVariable int id, 
+			@RequestBody(description = &quot;Datos del empleado&quot;, required = true,
+					content = @Content(schema = @Schema(implementation = Employee.class)))
+			@Valid Employee request, HttpServletResponse response) {
+<span class="nc" id="L68">		return service.update(response, id, request);</span>
+	}
+	
+	@Operation(summary = &quot;Registra varios empleados. Obtiene el registro del empleado con su ID&quot;, description = &quot;Registra uno o varios empleados&quot;)
+	@ApiResponse(responseCode = &quot;200&quot;, description = &quot;Ejecución correcta. Devuelve los registros de los empleados registrados incluyendo el ID que le corresponde&quot;)
+	@ApiResponse(responseCode = &quot;400&quot;, description = &quot;Errores de validación. Existe error en uno o varios de los empleados. Donde: Uno o varios de los campos proporcionados no cumplen con las validaciones definidas&quot;)
+	@PostMapping(&quot;/add&quot;)
+	public WebResponseDTO add(@Valid @RequestBody List&lt;Employee&gt; request, HttpServletResponse response) {
+<span class="nc" id="L76">		return service.add(response, request);</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

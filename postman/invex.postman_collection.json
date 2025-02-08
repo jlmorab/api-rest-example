@@ -1,0 +1,116 @@
+{
+	"info": {
+		"_postman_id": "ddd4b949-4efb-42ad-8aa5-fd582fba2097",
+		"name": "invex",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15488063"
+	},
+	"item": [
+		{
+			"name": "empleado",
+			"item": [
+				{
+					"name": "all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_HOST}}{{API_CONTEXT}}/empleado/all",
+							"host": [
+								"{{API_HOST}}{{API_CONTEXT}}"
+							],
+							"path": [
+								"empleado",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"primer_nombre\": \"nombre1\",\r\n        \"segundo_nombre\": \"nombre11\",\r\n        \"apellido_paterno\": \"apellid1\",\r\n        \"apellido_materno\": \"apellido11\",\r\n        \"edad\": 30,\r\n        \"sexo\": \"M\",\r\n        \"fecha_nacimiento\": \"23-11-1983\",\r\n        \"puesto\": \"dev\"\r\n    },\r\n    {\r\n        \"primer_nombre\": \"nombre2\",\r\n        \"apellido_paterno\": \"apellid2\",\r\n        \"apellido_materno\": \"apellido22\",\r\n        \"edad\": 40,\r\n        \"sexo\": \"F\",\r\n        \"fecha_nacimiento\": \"02-12-1983\",\r\n        \"puesto\": \"mis\"\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_HOST}}{{API_CONTEXT}}/empleado/add",
+							"host": [
+								"{{API_HOST}}{{API_CONTEXT}}"
+							],
+							"path": [
+								"empleado",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"empleado_id\": 999,\r\n    \"primer_nombre\": \"nombre5\",\r\n    \"apellido_paterno\": \"apellido5\",\r\n    \"apellido_materno\": \"apellido55\",\r\n    \"edad\": 50,\r\n    \"sexo\": \"X\",\r\n    \"fecha_nacimiento\": \"01-01-1983\",\r\n    \"puesto\": \"ccord\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_HOST}}{{API_CONTEXT}}/empleado/update/1",
+							"host": [
+								"{{API_HOST}}{{API_CONTEXT}}"
+							],
+							"path": [
+								"empleado",
+								"update",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"primer_nombre\": \"nombre1\",\r\n        \"segundo_nombre\": \"nombre11\",\r\n        \"apellido_paterno\": \"apellid1\",\r\n        \"apellido_materno\": \"apellido11\",\r\n        \"edad\": 30,\r\n        \"sexo\": \"M\",\r\n        \"fecha_nacimiento\": \"23-11-1983\",\r\n        \"puesto\": \"dev\"\r\n    },\r\n    {\r\n        \"primer_nombre\": \"nombre2\",\r\n        \"apellido_paterno\": \"apellid2\",\r\n        \"apellido_materno\": \"apellido22\",\r\n        \"edad\": 40,\r\n        \"sexo\": \"F\",\r\n        \"fecha_nacimiento\": \"02-12-1983\",\r\n        \"puesto\": \"mis\"\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_HOST}}{{API_CONTEXT}}/empleado/delete/1",
+							"host": [
+								"{{API_HOST}}{{API_CONTEXT}}"
+							],
+							"path": [
+								"empleado",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

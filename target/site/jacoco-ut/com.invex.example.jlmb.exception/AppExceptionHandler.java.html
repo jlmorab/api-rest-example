@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">example-jlmb</a> &gt; <a href="index.source.html" class="el_package">com.invex.example.jlmb.exception</a> &gt; <span class="el_source">AppExceptionHandler.java</span></div><h1>AppExceptionHandler.java</h1><pre class="source lang-java linenums">package com.invex.example.jlmb.exception;
+
+import static com.invex.example.jlmb.utils.Constants.CLIENT_ERROR;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.invex.example.jlmb.data.dto.MetaDTO;
+import com.invex.example.jlmb.data.dto.WebResponseDTO;
+
+import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L27">@Slf4j</span>
+@ControllerAdvice
+@RequiredArgsConstructor
+public class AppExceptionHandler extends ResponseEntityExceptionHandler {
+
+	@ExceptionHandler(value = {ResponseStatusException.class})
+    public ResponseEntity&lt;Object&gt; handleResponseStatusException(ResponseStatusException ex) {
+<span class="nc" id="L34">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L35">        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);</span>
+
+<span class="nc" id="L37">        MetaDTO meta = MetaDTO.builder()</span>
+<span class="nc" id="L38">            .status(CLIENT_ERROR)</span>
+<span class="nc" id="L39">            .statusCode(ex.getStatusCode().value())</span>
+<span class="nc" id="L40">            .build();</span>
+<span class="nc" id="L41">        meta.addMessage(ex.getReason());</span>
+
+<span class="nc" id="L43">        WebResponseDTO response = WebResponseDTO.builder()</span>
+<span class="nc" id="L44">            .meta(meta)</span>
+<span class="nc" id="L45">            .build();</span>
+
+<span class="nc" id="L47">        log.error(&quot;X -&gt; {}&quot;, ex.getReason());</span>
+
+<span class="nc" id="L49">        return new ResponseEntity&lt;&gt;(response, httpHeaders, ex.getStatusCode());</span>
+    }
+	
+	@Override
+    protected ResponseEntity&lt;Object&gt; handleMethodArgumentNotValid(
+			MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+<span class="nc" id="L55">    	return customArgumentResponse( exception );</span>
+    }
+	
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    public ResponseEntity&lt;Object&gt; handleArgumentException(Exception exception) {
+<span class="nc" id="L60">    	return customArgumentResponse( exception );</span>
+    }
+    
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity&lt;Object&gt; handleConstraintViolation(ConstraintViolationException exception) {
+<span class="nc" id="L65">    	return customArgumentResponse( exception );</span>
+    }
+    
+    @ExceptionHandler(value = {Exception.class})
+    protected ResponseEntity&lt;Object&gt; handleException(RuntimeException runtimeException, WebRequest webRequest) {
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        String message = runtimeException.getMessage() == null ? runtimeException.getClass().toString() : runtimeException.getMessage();</span>
+
+<span class="nc" id="L72">        boolean rollback = false;</span>
+
+<span class="nc" id="L74">        HttpStatus httpStatus= HttpStatus.INTERNAL_SERVER_ERROR;</span>
+
+<span class="nc" id="L76">        MetaDTO meta = MetaDTO.builder()</span>
+<span class="nc" id="L77">            .status(httpStatus.name())</span>
+<span class="nc" id="L78">            .statusCode(httpStatus.value())</span>
+<span class="nc" id="L79">            .message(null)</span>
+<span class="nc" id="L80">            .rollback(rollback)</span>
+<span class="nc" id="L81">            .build();</span>
+
+<span class="nc" id="L83">        WebResponseDTO response = WebResponseDTO.builder()</span>
+<span class="nc" id="L84">            .meta(meta)</span>
+<span class="nc" id="L85">            .build();</span>
+
+<span class="nc" id="L87">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L88">        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);</span>
+        
+<span class="nc" id="L90">        log.error(&quot;X -&gt; {}&quot;, message, runtimeException);</span>
+
+<span class="nc" id="L92">        return handleExceptionInternal(</span>
+            runtimeException,
+            response,
+            httpHeaders,
+            httpStatus,
+            webRequest
+        );
+    }
+    
+    private ResponseEntity&lt;Object&gt; customArgumentResponse( Exception exception ) {
+    	
+<span class="nc" id="L103">    	List&lt;String&gt; errors = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">    	if( exception instanceof MethodArgumentNotValidException ex ) {</span>
+<span class="nc" id="L105">    		errors = ex.getFieldErrors().stream()</span>
+<span class="nc" id="L106">    				.map( violation -&gt; violation.getField() + &quot;: &quot; + violation.getDefaultMessage() )</span>
+<span class="nc" id="L107">    				.toList();</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">    	} else if( exception instanceof IllegalArgumentException ex ) {</span>
+<span class="nc" id="L109">    		errors.add(ex.getMessage());</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">    	} else if( exception instanceof ConstraintViolationException ex ) {</span>
+<span class="nc" id="L111">    		errors = ex.getConstraintViolations().stream()</span>
+<span class="nc" id="L112">    				.map(violation -&gt; violation.getPropertyPath() + &quot;: &quot; + violation.getMessage())</span>
+<span class="nc" id="L113">    				.toList();</span>
+    	}//end if
+    	
+<span class="nc" id="L116">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L117">        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);</span>
+
+<span class="nc" id="L119">        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;</span>
+        
+<span class="nc" id="L121">        MetaDTO meta = MetaDTO.builder()</span>
+<span class="nc" id="L122">            .status(httpStatus.name())</span>
+<span class="nc" id="L123">            .statusCode(httpStatus.value())</span>
+<span class="nc" id="L124">            .message(errors)</span>
+<span class="nc" id="L125">            .build();</span>
+
+<span class="nc" id="L127">        WebResponseDTO apiResponseDTO = WebResponseDTO.builder()</span>
+<span class="nc" id="L128">            .meta(meta)</span>
+<span class="nc" id="L129">            .build();</span>
+
+<span class="nc" id="L131">        log.error(&quot;Validation failed: {}&quot;, errors);</span>
+
+<span class="nc" id="L133">        return new ResponseEntity&lt;&gt;(apiResponseDTO, httpHeaders, httpStatus);</span>
+
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

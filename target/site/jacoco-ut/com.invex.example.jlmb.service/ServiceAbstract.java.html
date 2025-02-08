@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServiceAbstract.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">example-jlmb</a> &gt; <a href="index.source.html" class="el_package">com.invex.example.jlmb.service</a> &gt; <span class="el_source">ServiceAbstract.java</span></div><h1>ServiceAbstract.java</h1><pre class="source lang-java linenums">package com.invex.example.jlmb.service;
+
+import java.util.function.Supplier;
+
+import org.slf4j.Logger;
+
+import com.invex.example.jlmb.data.dto.MetaDTO;
+import com.invex.example.jlmb.data.dto.WebResponseDTO;
+import com.invex.example.jlmb.enums.MetaEnum;
+import com.invex.example.jlmb.utils.ObjectUtils;
+
+import jakarta.servlet.http.HttpServletResponse;
+
+<span class="fc" id="L14">public abstract class ServiceAbstract {</span>
+	
+	protected WebResponseDTO executeFlow(HttpServletResponse response, Logger log, Supplier&lt;Object&gt; logic) {
+<span class="fc" id="L17">		log.trace(&quot;&gt;&gt; {}()&quot;, getMethodInvocation());</span>
+		try {
+<span class="fc" id="L19">			Object data = logic.get();</span>
+<span class="fc" id="L20">			traceLeavingMethod( log, data );</span>
+<span class="fc" id="L21">			return responseOK( response, data );</span>
+<span class="fc" id="L22">		} catch( Exception e ) {</span>
+<span class="fc" id="L23">			log.error(&quot;An error occurred while retrieving data&quot;, e);</span>
+<span class="fc" id="L24">			return responseError( response, e );</span>
+		}
+	}
+	
+	protected WebResponseDTO responseOK( HttpServletResponse response ) {
+<span class="nc" id="L29">		return response( response, MetaEnum.OK );</span>
+	}
+	
+	protected WebResponseDTO responseOK( HttpServletResponse response, Object data ) {
+<span class="fc" id="L33">		return responseWithData( response, MetaEnum.OK, data );</span>
+	}
+	
+	protected WebResponseDTO responseError( HttpServletResponse response, Exception e ) {
+<span class="fc" id="L37">		WebResponseDTO webResponse = response( response, MetaEnum.ERROR );</span>
+<span class="fc" id="L38">		webResponse.getMeta().addMessage( e.getMessage() );</span>
+<span class="fc" id="L39">		return webResponse;</span>
+	}
+	
+	protected WebResponseDTO responseWithData( HttpServletResponse response, MetaEnum meta, Object data ) {
+<span class="fc" id="L43">		WebResponseDTO webResponse = response( response, meta );</span>
+<span class="fc" id="L44">		webResponse.setData(data);</span>
+<span class="fc" id="L45">		return webResponse;</span>
+	}
+	
+	protected WebResponseDTO response( HttpServletResponse response, MetaEnum meta ) {
+<span class="fc" id="L49">		MetaDTO metaDTO = meta.getMeta();</span>
+<span class="fc" id="L50">		response.setStatus( metaDTO.getStatusCode() );</span>
+<span class="fc" id="L51">		return WebResponseDTO.builder()</span>
+<span class="fc" id="L52">				.meta( metaDTO )</span>
+<span class="fc" id="L53">				.build();</span>
+	}
+	
+	private void traceLeavingMethod( Logger log, Object object ) {
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">		if (log.isTraceEnabled()) {</span>
+<span class="fc" id="L58">			StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L59">			sb.append(String.format(&quot;&lt;&lt; %s() &lt; Returning &quot;, getMethodInvocation()));</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">			if (object != null) {</span>
+<span class="fc" id="L61">				sb.append( object.getClass().getName() + &quot; = &quot; );</span>
+<span class="fc" id="L62">				sb.append( ObjectUtils.getJsonString(object) );</span>
+			} else {
+<span class="nc" id="L64">				sb.append(&quot;null&quot;);</span>
+			}
+<span class="fc" id="L66">			log.trace(sb.toString());</span>
+		}
+<span class="fc" id="L68">	}</span>
+	
+	private String getMethodInvocation() {
+<span class="fc" id="L71">		return StackWalker.getInstance()</span>
+<span class="fc" id="L72">				.walk(frames -&gt; frames.skip(1)</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">						.filter(frame -&gt; !frame.getClassName().equals(ServiceAbstract.class.getName()))</span>
+<span class="fc" id="L74">						.findFirst()</span>
+<span class="fc" id="L75">						.map(frame -&gt; String.format(&quot;%s.%s&quot;, frame.getClassName(), frame.getMethodName()))</span>
+<span class="fc" id="L76">						.orElse(&quot;Method not available&quot;));</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
