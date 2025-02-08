@@ -39,11 +39,11 @@ Get-Content "003_DDL_CreateTableEmpleado.sql" | docker exec -i postgres psql -U 
 Get-Content "004_DDL_SP_EliminarEmpleado.sql" | docker exec -i postgres psql -U postgres -d invex
 ~~~
 
-Con estos scripts se creara la base de datos `invex`, el usuario `appusrtest` que utiliza la api, así como sus permisos, crea la tabla de `empleado` y el store procedured `deleteEmployeeById`.
+Con estos scripts se creara la base de datos `invex`, el usuario `appusrtest` que utiliza la API, así como sus permisos, crea la tabla de `empleado` y el store procedured `deleteEmployeeById`.
 
 ## Compilacion de API
 
-Para compilar la API es necesario tener `maven` y el `JDK` de java 21, además de tener correctamente configuradas las variables de entorno.
+Para compilar la API es necesario tener `maven` y el `JDK` de java 17, además de tener correctamente configuradas las variables de entorno.
 
 Estando en la ruta raiz del proyecto, para ejecutar mediante Powershell ingresamos
 
@@ -55,17 +55,17 @@ mvn dependency:resolve
 mvn clean package
 ~~~
 
-esto descargará las dependencias, ejecutara las pruebas automatizadas, generará el informe y sitio con el resultado de las pruebas y compilara la aplicación.
+esto descargará las dependencias, ejecutara las pruebas automatizadas, generará el informe de pruebas, creará el micrositio con la cobertura de código y compilará la aplicación.
 
 ## Ejecución de API
 
-Nos ubicamos en la ruta donde esta el artefacto compilado `/target`. Para ejecutar la API mediante Powershell se hace ingresando
+Nos ubicamos en la ruta donde esta el artefacto compilado en `/target`. Para ejecutar la API mediante Powershell se hace ingresando
 
 ~~~bash
 java -jar example-jlmb-0.0.1-SNAPSHOT.jar
 ~~~
 
-esto desplegará la API con las configuraciones con que se compilo. En caso de querer modificarlas se tomaria de `/src/main/resources` los archivos `application.yml` y `secrets.yml`, se editaria según se requiera y se ingresaria
+esto desplegará la API con las configuraciones con que se compilo. En caso de querer modificarlas se tomará de `/src/main/resources` los archivos `application.yml` y `secrets.yml`, se editarán según se requiera y se ingresaria
 
 ~~~bash
 # Estando el archivo 'application.yml' en la misma ubicación
@@ -81,12 +81,12 @@ La API incluye OpenAPI que tiene embebido Swagger para la documentación del ser
 
 ## Informe de pruebas unitarias
 
-Al compilarse la API, tiene configurado `surfire` lo que hace que el resultado de las pruebas las genere en `/target/surefire-reports`, en esta ubicación esta en archivos XML el detalle de las pruebas unitarias y en archivos TXT el resumen de su ejecución. 
+Al compilarse la API, tiene configurado el plugin de `surefire` lo que hace que el resultado de las pruebas las genere en `/target/surefire-reports`, en esta ubicación esta en archivos XML el detalle de las pruebas unitarias y en archivos TXT el resumen de su ejecución. 
 
 ## Cobertura de código
 
-Al compilarse la API, tiene configurado `jacoco` lo que hace que se genere un micrositio web con el resultado de la cobertura de código, para poder acceder a este micrositio se abrimos el archivo `index.html` que se encuentra en `/target/site/jacoco-ut`. Es este se mostrará cada uno de los packages del proyecto y los diferentes niveles de cobertura que se tiene, al ingresar en cada uno de ellos se puede navegar las clases que contiene y en ellas marcadas en colores las líneas que son comprobadas en las pruebas automatizadas que tiene el proyecto.
+Al compilarse la API, tiene configurado el plugin de `jacoco` lo que hace que se genere un micrositio web con el resultado de la cobertura de código, para poder acceder a este micrositio se abre el archivo `index.html` que se encuentra en `/target/site/jacoco-ut`. Es éste se mostrará cada uno de los packages del proyecto indicando los diferentes niveles de cobertura que tiene, al ingresar en cada uno de ellos se puede navegar entre las clases que contiene y en ellas esta marcado por colores las líneas de código. El color refleja cuales líneas son comprobadas por las pruebas unitarias que se ejecutaron.
 
 ## API testing
 
-En la raíz del proyecto se tiene la carpeta `postman` que contiene la colección de las diferentes peticiones a la API. Las URL de las peticiones contienen variables de entorno de postman que estan en el archivo con sufijo `environment.json`;
+En la raíz del proyecto se tiene la carpeta `postman` que contiene la colección de las diferentes peticiones a la API. Las URL de las peticiones contienen variables de entorno de postman que estan en el archivo con sufijo `...environment.json`;
